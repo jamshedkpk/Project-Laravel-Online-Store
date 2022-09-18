@@ -1,0 +1,81 @@
+Install new laravel 
+composer create-project laravel/laravel example-app
+
+Install Bootstrap
+composer require laravel/ui
+php artisan ui bootstrap --auth
+
+Install Node Package Manager
+npm install
+npm run dev
+
+Create Role model
+link Role model to User model
+Create checkAdmin method inside User model that will return name of role
+Create AdminMiddleware
+Call checkAdmin method from AdminMiddleware
+Register AdminMiddleware inside Kernal.php
+Create a function authenticated inside app\http\controllers\auth\LoginController 
+for checking weither user is admin or user
+Create route for admin in web.php
+
+
+Add Admin Panel with logout functionality
+Create Admin Folder inside views and a file index.blade.php
+Create Admin Layout inside layouts
+extends index.blade.php from this admin layout
+
+create date format and time format pattern inside App\Providers\AppServiceProvider.php
+
+Create model, factory, seeder, controller and migration for catagory
+perform crud operation over catagory
+
+To upload image in your project install image intervention
+composer require intervention/image
+Find the providers in config >> app.php file and register the ImageServiceProvider and allias etc...
+If it says GD library was not found than go to ini.php file and un comment DG extension....
+
+Perform crud operation on Catagory from admin side
+Perform crud operation on product from admin side
+
+Create a controller for front end called FrontEndController and inside views create index.blade.php insdie frontend
+Create a basic layout for front end user inside layouts.frontend.app 
+
+Integrate navbar at the start
+Integrate slider after it
+Integrate grid of product after if
+Integrate owl slider ofter it from the link https://owlcarousel2.github.io/OwlCarousel2/demos/demos.html
+Integrate Google Fonts from the link https://fonts.google.com/specimen/Open+Sans#standard-styles
+
+Create a page for product detail
+Perform operation to display product
+
+Create Cart Model
+Perform ajax operations to Delete, Update etc cart product
+
+For Pagination go to Providers\AppServiceProvider
+and inside boot method type Paginator::useBootstrap();
+also add namespace use Illuminate\Pagination\Paginator;
+
+Localization: Localization means how to use multiple languages in laravel for using localization check
+Route
+Route::post('change/language',[FrontEndController::class,'changeLanguage'])->name('changeLanguage');
+Middlewire
+LanguageManager.php 
+view navbar.blade.php
+and controller method changeLanguage inside FrontEndController
+make different folder for different language inside language as shown in the project
+access different variable data in view through the following way
+{{ __('nameoflanguagefolder.nameofvariable') }}  
+
+Sending Email In Laravel
+Create a controller MailController
+php artisan make:controller MailController
+Create a mail class
+php artisan make:mail TestMail
+Inside .env file change 
+MAIL_HOST=mailhog to MAIL_HOST=smtp.googlemail.com
+MAIL_USERNAME=null to MAIL_USERNAME=secretarytarikhel@gmail.com
+MAIL_PASSWORD=null to MAIL_PASSWORD=your password for googe account
+Go to gmail account open Account->Security->Less secure app access
+
