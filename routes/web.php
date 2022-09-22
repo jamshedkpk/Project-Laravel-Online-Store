@@ -17,7 +17,7 @@ use App\Http\Controllers\CityController as UserCityController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\MailController;
+use App\Http\Controllers\RatingController;
 
 Route::get('/test',[MailController::class,'sendMail']);
 
@@ -83,7 +83,8 @@ Route::put('/user/update/profile/{id}',[userController::class,'updateProfile'])-
 Route::put('/user/update/password/{id}',[userController::class,'updatePassword'])->name('update-user-password');
 Route::put('/user/update/photo/{id}',[userController::class,'updatePhoto'])->name('update-user-photo');
 Route::put('/user/update/status/{id}',[userController::class,'updateStatus'])->name('update-user-status');
-
+// For rating a product by login user
+Route::post('/rate',[RatingController::class,'addRate'])->name('rate-product');
 
 // Routes for admin
 Route::middleware(['auth','isAdmin'])->group(function()

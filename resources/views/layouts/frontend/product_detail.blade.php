@@ -21,6 +21,46 @@ label.radio input:checked+span{border-color: #ff0000;background-color: #ff0000;c
 .btn-danger:hover{background-color: #da0606 !important;border-color: #da0606 !important}
 .btn-danger:focus{box-shadow: none}
 .cart i{margin-right: 10px}
+
+/* rating */
+.rating {
+display: flex;
+flex-direction: row-reverse;
+justify-content: center;
+}
+
+
+.rating > input{ display:none;}
+
+.rating > label {
+position: relative;
+width: 1.1em;
+font-size: 8vw;
+color: #FFD700;
+cursor: pointer;
+}
+
+.rating > label::before{
+content: "\2605";
+position: absolute;
+opacity: 0;
+}
+
+.rating > label:hover:before,
+.rating > label:hover ~ label:before {
+opacity: 1 !important;
+}
+
+.rating > input:checked ~ label:before{
+opacity:1;
+}
+
+.rating:hover > input:checked ~ label:before{ opacity: 0.4; }
+
+
+
+
+/* End of Star Rating */
 </style>
 <div class="container mt-5 mb-5">
     <div class="row d-flex justify-content-center">
@@ -29,7 +69,7 @@ label.radio input:checked+span{border-color: #ff0000;background-color: #ff0000;c
                 <div class="row">
                     @if($product)
                     <div class="col-md-4">
-                    <img id="main-image" src="{{ asset('storage/productPhoto/'.$product->photo) }}" height="100%"/>
+                    <img id="main-image" src="{{ asset($product->photo) }}" height="100%"/>
                     </div>
                     <div class="col-md-8">
                         <div class="product">
@@ -60,6 +100,16 @@ label.radio input:checked+span{border-color: #ff0000;background-color: #ff0000;c
                             <p class="about">
                             {{ $product->description }}    
                             </p>
+                            <!-- Display rating-->
+                            <h5 class="text-center">
+                            <span class="fa fa-star {{ $rating > 0 ? 'text-warning':'' }} "></span>
+                            <span class="fa fa-star {{ $rating > 1 ? 'text-warning':'' }} "></span>
+                            <span class="fa fa-star {{ $rating > 2 ? 'text-warning':'' }} "></span>
+                            <span class="fa fa-star {{ $rating > 3 ? 'text-warning':'' }} "></span>
+                            <span class="fa fa-star {{ $rating > 4 ? 'text-warning':'' }} "></span>
+                            Rated : 
+                            {{ $rate_value }}
+                            </h5>
                             <div class="text-center">
                             @if($product->quantity>0)
                             <button type="button" class="btn btn-success text-uppercase btnAddProduct mr-2 px-4" product_id="{{$product->id}}"> <i class="fa fa-shopping-cart"></i> 
@@ -72,17 +122,86 @@ label.radio input:checked+span{border-color: #ff0000;background-color: #ff0000;c
                             <a href="{{route('homepage')}}" class="btn btn-danger text-uppercase mr-2 px-4"> <i class="fa fa-home"></i>
                             &nbsp;
                             Home Page</a>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            <span class="fa fa-star"></span>&nbsp;
+                            Rate The Product
+                            </button>
+
                             </div>
                         </div>
                     </div>
                     @endif
                 </div>
+            <br>
+<!-- Start of Modal for showing product rate  -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-success" id="exampleModalLabel">
+        <strong>
+        {{ $product->name }}
+        </strong>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      <form method="post" action="{{route('rate-product')}}">
+       @csrf 
+       <input type="hidden" name="product_id" value="{{ $product->id }}">
+  <div class="rating">
+  <input type="radio" name="rating" value="5" id="5"><label for="5">☆</label>
+  <input type="radio" name="rating" value="4" id="4"><label for="4">☆</label>
+  <input type="radio" name="rating" value="3" id="3"><label for="3">☆</label>
+  <input type="radio" name="rating" value="2" id="2"><label for="2">☆</label>
+  <input type="radio" name="rating" value="1" id="1"><label for="1">☆</label>
+  </div>
+
+       </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Submit Rate</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- End of Modal for showing product rate  -->
+
+
+
             </div>
         </div>
     </div>
 </div>
 @endsection
 @section('extra-js')
+
+@if($message=Session::get('rate-added'))
+<script>
+// Sweat alert for product rate added
+swal({
+title: "Thank You !",
+text: "{{ $message }}",
+icon: "success",
+buttons: true,
+dangerMode: true,
+})
+</script>
+@endif
+
+@if($message=Session::get('rate-updated'))
+<script>
+// Sweat alert for product rate updated
+swal({
+title: "Thank You !",
+text: "{{ $message }}",
+icon: "success",
+buttons: true,
+dangerMode: true,
+})
+</script>
+@endif
 
 <script>
 $(document).ready(function(){

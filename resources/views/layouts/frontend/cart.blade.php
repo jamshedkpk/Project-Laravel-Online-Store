@@ -1,249 +1,171 @@
 @extends('layouts.frontend.app')
 @section('content')
 <style>
-.card
+.container
 {
-padding:5px;
+margin-top:30px;
+}
+.row
+{
+text-align:center;
+}
+.col-md-2
+{
+text-align:center;
 }
 </style>
-
-<div class="container" style="margin-top:10px;">
-<h3 class="text-center text-primary">
-{{ __('message.cart_section') }}  
+<div class="container product_data">
+<div class="row">
+<div class="col-md-10 offset-1">
+<!-- Start of card-->
+<div class="card cartItems">
+<div class="card-header bg-primary">
+<div class="card-title">
+<h3 class="text-light text-center">
+{{ __('message.cart_section') }}
 </h3>
+</div>
+</div>
+<div class="card-body">
+<div class="row">
+<div class="col-md-2">
+<strong class="text-primary">
+{{ __('message.cart_s.no') }}
+</strong>
+</div>
+<div class="col-md-2">
+<strong class="text-primary">
+{{ __('message.cart_name') }}
+</strong>
+</div>
+<div class="col-md-2">
+<strong class="text-primary">
+{{ __('message.cart_quantity') }}
+</strong>
+</div>
+<div class="col-md-2">
+<strong class="text-primary">
+{{ __('message.cart_price') }}
+</strong>
+</div>
+<div class="col-md-2">
+<strong class="text-primary">
+{{ __('message.cart_total') }}
+</strong>
+</div>
+<div class="col-md-1">
+<strong class="text-primary">
+{{ __('message.cart_update') }}
+</strong>
+</div>
+<div class="col-md-1">
+<strong class="text-primary">
+{{ __('message.cart_delete') }}
+</strong>
+</div>
+</div>
 <hr>
-<div id="cartBody">
-
+@foreach($products as $index=>$product)
+<div class="row product_data">
+<div class="col-md-2">
+{{ $index+1 }}
+</div>
+<div class="col-md-2">
+{{ $product->name }}
+</div>
+<div class="col-md-2">
+<input type="number" class="form-control quantity" min="1"  max="10"/>
+</div>
+<div class="col-md-2">
+<input type="text" class="form-control price text-center" value="{{ $product->selling_price }}" readonly>
+</div>
+<div class="col-md-2">
+<input type="text" class="form-control total text-center" value="{{ $product->selling_price }}" readonly>
+</div>
+<div class="col-md-1">
+<button class="btn btn-warning updateCartBtn" product_id="{{ $product->id }}">
+<span class="fa fa-edit text-light"></span>
+</a>
+</div>
+<div class="col-md-1">
+<button product_id="{{ $product->id }}" class="btn btn-danger deleteCartBtn">
+<span class="fa fa-trash text-light"></span>
+</button>
+</div>
+<hr>
+</div>
+@endforeach
 </div>
 
+<div class="card-footer bg-primary">
 <div class="row">
-<div class="col-md-4 offset-1">
-<h3 class="text-end text-primary">
+<div class="col-md-12">
+<h3 class="text-end text-light">
 {{ __('message.total_price') }} : 
 PKR
 <span id="cart-price">
 </span>  
 </h3>
 </div>
-</div>
 
-<div class="row">
-<div class="col-md-8 offset-2">
-<div class="card">
-<div class="body">
 <div class="row">
 <div class="col-md-6">
 <a class="btn btn-warning btn-block btn-lg w-100" href="{{ route('checkout-index') }}">
 <i class="fa fa-shopping-cart"></i>
 &nbsp;    
-Proceed to Pay
+{{ __('message.cart_btn_proceed') }}
 </a>
 </div>
 <div class="col-md-6">
 <a href="{{ route('homepage') }}" class="btn btn-danger btn-block btn-lg w-100">
 <i class="fa fa-home"></i>
 &nbsp;  
-Homepage</a>
-</div>
-</div>
+{{ __('message.cart_btn_homepage') }}
+</a>
 </div>
 </div>
 </div>
 
+</div>
+</div>    
+<!-- End of card-->
+</div>
 </div>
 </div>
 @endsection
-
-
 @section('extra-js')
 <script>
-// Start of jquery
+// Start of JQuery
 $(document).ready(function(){
-searchRecord();
-/* To search a record by ajax we can simply use window.location.reload()
-function instead of the following complex code. 
-But if you want to not refresh the page than you can write the code below.
-In this wany we create a div where we want to display the code and then
-attatch the code by prepend function of jquery. But recommended way is to 
-use function of window.location.reload();
-*/
+// Start of When user increase or decrease quantity
+$('body').delegate('.quantity','change',function(e){
+    // Stop the default action
+e.preventDefault();
+// Get quantity of product
+var quantity=$(this).val();
+// Get price nearest to .product_data
+var price=$(this).closest('.product_data').find('.price').val();
+// Calculate total price 
+var total=(quantity*price);
+// Set price to total 
+$(this).closest('.product_data').find('.total').val(total);
+cartTotalPrice();
 
-//Start of search cart data throught ajax
-function searchRecord()
+});
+// End of When user increase or decrease quantity
+
+// Start of calculate cart total price
+cartTotalPrice();
+// Start of cartTotalPrice function
+function cartTotalPrice()
 {
 // store csrf token in token variable
 var token = $("meta[name='csrf-token']").attr("content");
-// Start of ajax operation to search cart record
-$.ajax
-({
-// URL from where we want to fetch data
-url:"/cart/products",
-// Type of request for fetching data
-type:"GET",
-// In which format we want to fetch data
-dataType:'json',
-// To clear cache
-cache:false,
-// Send csrf token for security purpose
-data:{
-  "_token":token
-},
-// If request is successfull
-success:function(response)
-{
-// To count no of products in cart
-var count=response['products'].length;
-if(count>0)
-{
-// Running for loop to display data in html
-var i=0;
-for(i=0; i<count; i++)
-{
-// Store attributes in different variable
-var id=response['products'][i]['id'];
-var name=response['products'][i]['name'];
-var photo=response['products'][i]['photo'];;
-var price=response['products'][i]['selling_price'];
-// To attach all fetched data with cartBody id
-$('#cartBody').prepend(
-'<div class="row">'
-+
-'<div class="col-md-8 offset-2">'
-+
-'<div class="card rounded-3 mb-4">'
-+
-'<div class="row d-flex justify-content-between align-items-center">'
-+
-'<div class="col-md-2 text-center">'
-+
-name
-+
-'</div>'
-+
-'<div class="col-md-2">'
-+
-'<img src="' + photo + '" height="60px;" style="border-radius:10px;"/>'
-+
-'</div>'
-+
-'<div class="col-md-2 text-center">'
-+
-'<input type="number" class="form-control form-control-sm qty" style="height:37px;" pid="' +id+ '" id="qty-'+id+'" min="1" max="20"/>'
-+
-'</div>'
-+
-'<div class="col-md-2 text-center">'
-+
-'<input type="text" value="'+price+'" pid="'+id+'" id="price-'+id+'" class="form-control price" />'
-+
-'</div>'
-+
-'<div class="col-md-2 text-center">'
-+
-'<input type="text" pid="'+id+'" id="total-'+id+'" class="form-control total"/>'
-+
-'</div>'
-+
-'<div class="col-md-1 text-center">'
-+
-'<a href="#" product_id="' + id + '" class="text-warning updateCartBtn" id="updatebtn">'
-+
-'<span class="fa fa-edit">'
-+
-'</span>'
-+
-'</a>'
-+
-'</div>'
-+
-'<div class="col-md-1 text-center">'
-+
-'<a href="#" product_id="' + id + '" class="text-danger deleteCartBtn" id="deletebtn">'
-+
-'<span class="fa fa-trash">'
-+
-'</span>'
-+
-'</a>'
-+
-'</div>'
-+
-'</div>'
-+
-'</div>'
-+
-'</div>'
-+
-'</div>'
-+
-'</div>'
-);
-}
-// End of if count > 0
-}
-// If their is not data
-else
-{
-$('#cartBody').html(
-'<div class="row">'
-+
-'<div class="col-md-8 offset-2 text-center">'
-+
-'<h4 class="text-center text-danger">Your Cart Is Empty</h4>'
-+
-'<div class="img-thumbnail">'
-+
-'<img class="img-responsive" src="template_admin/assets/images/empty.png" height="300px;" width="600px;">'
-+
-'</div>'
-+
-'</div>'
-+
-'</div>'
-)
-}
-}
-});
-}
-//End of search cart data throught ajax
 
-
-// Start to increase and decrease quantity of cart
-// When use press any key then total price is the following
-$("body").delegate(".qty","keypress",function(){
-// Get product id throught attribute property
-var pid=$(this).attr('pid');
-// Get product quantity by defining a unique name by mixing id and pid
-var quantity=$("#qty-"+pid).val();
-// Get product price by defining a unique name by mixing id and pid
-var price=$("#price-"+pid).val();
-// Calculate total price of each product 
-var total=(quantity*price);
-$("#total-"+pid).val(total);
-});
-
-// When use mouse out then total price is the following
-$("body").delegate(".qty","mouseout",function(){
-var pid=$(this).attr('pid');
-var quantity=$("#qty-"+pid).val();
-var price=$("#price-"+pid).val();
-var total=(quantity*price);
-$("#total-"+pid).val(total);
-});
-
-// End to increase and decrease quantity of cart
-
-countCartProducts();
-// Start of CountCartProducts function
-function countCartProducts()
-{
-// store csrf token in token variable
-var token = $("meta[name='csrf-token']").attr("content");
 // Start of ajax
-$.ajax
-({
+$.ajax({
 // Url where you want to send data
-url: "/cart/count",
+url: "/cart/price",
 // Method of sending data
 type: 'GET',
 // Format of data
@@ -256,14 +178,14 @@ data: {
 },
 success:function(response)
 {
-$('#cartProducts').html(response.data);    
-cartTotalPrice();
+$total=response['cart-total-price'];
+$('#cart-price').html($total);
 }
-});
 // End of ajax
+});
+// End of cartTotalPrice function
 }
-// End of countCartProducts function
-
+// End of calculate cart total price
 
 //Start to delete a product from cart by ajax
 
@@ -293,6 +215,11 @@ data: {
 },
 // Response of data
 success: function (data){
+// To reload the cart section only
+countCartProducts();
+cartTotalPrice();
+// To refresh only cart section
+$('.cartItems').load(location.href + " .cartItems");
 // Display success message of delete record
 swal({
 title: "Deleted Successfully!",
@@ -301,12 +228,6 @@ icon: "success",
 timer:2000,  
 button: "OK",
 });
-// To make cartBody empty before fetching new data
-$('#cartBody').empty();
-// To fetch data after delete product from cart
-searchRecord();
-countCartProducts();
-cartTotalPrice();
 
 },
 // If their is any error
@@ -344,12 +265,43 @@ button: "OK",
 });
 // End to delete a product from cart by ajax
 
+countCartProducts();
+// Start of CountCartProducts function
+function countCartProducts()
+{
+// store csrf token in token variable
+var token = $("meta[name='csrf-token']").attr("content");
+// Start of ajax
+$.ajax
+({
+// Url where you want to send data
+url: "/cart/count",
+// Method of sending data
+type: 'GET',
+// Format of data
+dataType:'json',
+// To clear cache
+cache:false,
+// Data which you want to send
+data: {
+"_token": token,
+},
+success:function(response)
+{
+$('#cartProducts').html(response.data);    
+cartTotalPrice();
+}
+});
+// End of ajax
+}
+// End of countCartProducts function
+
 // Start of update cart product through ajax
 $('body').delegate('.updateCartBtn','click',function(){
 event.preventDefault();
 
 var pid=$(this).attr('product_id');
-var quantity=$("#qty-"+pid).val();
+var quantity=$(this).closest('.product_data').find('.quantity').val();
 updateCartProduct(pid,quantity);
 function updateCartProduct(pid,quantity)
 {
@@ -381,10 +333,6 @@ icon: "success",
 timer:2000,  
 button: "OK",
 });
-// To make cartBody empty before fetching new data
-$('#cartBody').empty();
-// To fetch data after delete product from cart
-searchRecord();
 countCartProducts();
 cartTotalPrice();
 },
@@ -422,43 +370,12 @@ button: "OK",
 });
 }
 //updateproduct(pid,quantity,price,total);
+
 });
 // End of update cart product through ajax
 
-// Start of calculate cart total price
-cartTotalPrice();
-// Start of cartTotalPrice function
-function cartTotalPrice()
-{
-// store csrf token in token variable
-var token = $("meta[name='csrf-token']").attr("content");
-
-// Start of ajax
-$.ajax({
-// Url where you want to send data
-url: "/cart/price",
-// Method of sending data
-type: 'GET',
-// Format of data
-dataType:'json',
-// To clear cache
-cache:false,
-// Data which you want to send
-data: {
-"_token": token,
-},
-success:function(response)
-{
-$total=response['cart-total-price'];
-$('#cart-price').html($total);
-}
-// End of ajax
-});
-}
-// End of cartTotalPrice function
-// End of calculate cart total price
 
 });
-// End of jquery
+// End of JQuery
 </script>
 @endsection

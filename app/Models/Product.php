@@ -30,5 +30,9 @@ public function userwishlist()
 {
 return $this->belongsToMany(User::class,'wishlists','product_id','user_id');
 }
-
+// Each product has multiple user rates
+public function userRates()
+{
+return $this->hasMany(User::class);
+}
 }

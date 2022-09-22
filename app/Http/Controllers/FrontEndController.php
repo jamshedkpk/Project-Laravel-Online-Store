@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Catagory;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Rating;
+
 use App;
 
 class FrontEndController extends Controller
@@ -35,7 +37,10 @@ public function productDetail($pslug,$id)
 {
 // Get product detail 
 $product=Product::find($id);
-return view('layouts.frontend.product_detail')->with(['product'=>$product]);
+$stars=5;
+$rating=Rating::where(['product_id'=>$id,'user_id'=>Auth::id()])->pluck('star_rating')->first();
+$rate_value=$rating/$stars;
+return view('layouts.frontend.product_detail')->with(['product'=>$product,'stars'=>$stars,'rating'=>$rating,'rate_value'=>$rate_value]);
 }
 
 // change language

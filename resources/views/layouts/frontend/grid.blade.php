@@ -201,22 +201,22 @@ Price : {{$product->original_price}}
 </div>
 <!-- End Start of Latest Product-->
 
-@if($message=Session::get('product-exist'))
+@if($message=Session::get('rate-added'))
 <script>
 swal({
-title: "Fail To Add Product",
-text: "{{$message}}",
-icon: "error",
+title: "Thanks You !",
+text: "{{ $message }}",
+icon: "success",
 buttons: true,
 dangerMode: true,
 })
 </script>
 @endif
 
-@if($message=Session::get('product-added-to-cart'))
+@if($message=Session::get('rate-updated'))
 <script>
 swal({
-title: "Good job!",
+title: "Thank You !",
 text: "{{ $message }}",
 icon: "success",
 timer:2000,  

@@ -101,18 +101,20 @@ File::delete($path);
 
 // Get Name of uploaded File with Extension
 $originalPhotoName=$request->file('photo')->getClientOriginalName();
-// Get Name of uploaded File with Extension
+// Get Extension of uploaded File
 $originalPhotoExtension=$request->file('photo')->getClientOriginalExtension();
-// Get Only name of uploaded File
-$originalPhoto=pathinfo($originalPhotoName,PATHINFO_FILENAME);
-// Make a unique file name to store in DB
-$fileName=$originalPhoto."-".time().".".$originalPhotoExtension;
-// Upload file to the directory and & resize it
+// Get Only Name of uploaded File
+$orgininalPhoto=pathinfo($originalPhotoName,PATHINFO_FILENAME);
+// File name which we want to store in DB
+$filename=$orgininalPhoto. "_" .time(). "." .$originalPhotoExtension;
+// Upload file to the directory
 $photo=$request->file('photo');
-$fileRezise=Image::make($photo->getRealPath());
-$fileRezise->resize(300,300);
-$fileRezise->save(public_path(DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'productPhoto'.DIRECTORY_SEPARATOR.$fileName));
-$data['photo']=$fileName;
+$fileResize=Image::make($photo->getRealPath());
+$fileResize->resize(300,300);
+$fileResize->save('storage/productPhoto/'.$filename);
+
+// update the product
+$data['photo']=$filename;
 $update=$product->update
 ([
 'name'=>$request->name,
@@ -123,7 +125,7 @@ $update=$product->update
 'slug'=>$request->slug,
 'catagory_id'=>$request->catagory_id,
 'status'=>$request->status,
-'photo'=>'storage/productPhoto/'.$fileName,
+'photo'=>'storage/productPhoto/'.$filename,
 ]);
 if($update)
 {

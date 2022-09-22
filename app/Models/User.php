@@ -85,4 +85,9 @@ public function state()
 {
 return $this->belongsTo(State::class);
 }
+// Each user can rate multiple products
+public function productRates()
+{
+return $this->hasMany(Product::class) ;   
+}
 }
