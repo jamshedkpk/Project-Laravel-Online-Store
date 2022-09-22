@@ -33,7 +33,7 @@ $products=Product::where(['catagory_id'=>$id,'status'=>1])->inRandomOrder()->pag
 return view('layouts.frontend.catagory')->with(['catagories'=>$catagories,'products'=>$products]);    
 }
 
-public function productDetail($pslug,$id)
+public function productDetail($id)
 {
 // Get product detail 
 $product=Product::find($id);
@@ -50,5 +50,35 @@ $language=$request->lang;
 App::setLocale($language);
 session()->put("locale",$language);
 return response()->json(['data'=>'Language is successfully changed']);
+}
+
+// complete auto search through ajax
+public function searchAutoComplete()
+{
+$products=Product::select('name')->where(['status'=>1])->get();
+$data=[];
+foreach($products as $item)
+{
+$data[]=$item['name'];
+}
+return $data;    
+}
+
+// search products through search bar
+public function searchProduct(Request $request)
+{
+$search=$request->search;
+if($search!=null)
+{
+$product=Product::where("name","LIKE","%$search%")->first();
+if($product)
+{
+return redirect()->route('product-detail',$product->id);
+}
+}
+else
+{
+return back()->with(['search-error'=>'Please Enter A Product Name To Search !']);
+}
 }
 }

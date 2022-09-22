@@ -44,7 +44,7 @@ Route::get('/',[FrontEndController::class,'index'])->name('homepage');
 // Get product of specific catagory by using catagory id
 Route::get('/catagory/products/{id}',[FrontEndController::class,'searchCatagoryProduct'])->name('catagory-product');
 // Get product detail by using product id
-Route::get('/product-detail/{productSlug}/{id}',[FrontEndController::class,'productDetail'])->name('product-detail');
+Route::get('/product-detail/{id}',[FrontEndController::class,'productDetail'])->name('product-detail');
 // Get all products in the cart of a specific user
 Route::get('/cart',[CartController::class,'index'])->name('cart-index');
 // Store new product in the cart
@@ -68,6 +68,10 @@ Route::get('/place/order',[CheckoutController::class,'placeOrder'])->name('place
 // Payment page for paypall
 Route::get('/payment/{orderid}',[PaymentController::class,'index'])->name('payment-index');
 Route::put('/payment/update/{orderid}',[PaymentController::class,'updateOrderPayment'])->name('payment-update');
+// complete auto search through ajax
+Route::get('/products/autocomplete',[FrontEndController::class,'searchAutoComplete'])->name('search-auto-complete');
+// search products
+Route::post('/product/search',[FrontEndController::class,'searchProduct'])->name('product-search');
 
 Auth::routes();
 

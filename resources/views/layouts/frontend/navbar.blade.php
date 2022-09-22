@@ -175,20 +175,36 @@ $('#cartProducts').html(response.data);
 </li>
 
 </ul>
-<form class="d-flex input-group w-auto">
+<form method="post" action="{{route('product-search')}}" class="d-flex input-group w-auto">
+@csrf
 <input
 type="search"
 class="form-control"
-placeholder="Type query"
+placeholder="Search a Product Here"
 aria-label="Search"
+id="search",
+name="search"
 />
 <button
-class="btn btn-outline-primary"
-type="button"
-data-mdb-ripple-color="dark">
+class="btn btn-outline-primary" 
+type="submit"
+data-mdb-ripple-color="dark" 
+>
 Search
 </button>
-</form>
+</form> 
 </div>
 </div>
 </nav>
+@if($message=Session::get('search-error'))
+<script>
+swal({
+title: "Warning !",
+text: "{{ $message }}",
+icon: "error",
+timer:2000,  
+button: "OK",
+});
+</script>
+@endif
+

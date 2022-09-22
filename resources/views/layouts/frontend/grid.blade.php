@@ -156,11 +156,11 @@ background-color:green;
 <div class="card">
 <div class="card-body">
 <div class="product"> 
-<a href="{{url('product-detail/'.$product->slug,$product->id)}}" style="text-decoration:none;">
+<a href="{{url('product-detail/'.$product->id)}}" style="text-decoration:none;">
 <img src="{{asset($product->photo)}}" height="200px;" class="img-responsive" alt="">
 </a>
 <ul class="d-flex align-items-center justify-content-center list-unstyled icons">
-<a href="{{url('product-detail/'.$product->slug,$product->id)}}" style="text-decoration:none;">
+<a href="{{url('product-detail/'.$product->id)}}" style="text-decoration:none;">
 <li class="icon bg-danger"><span class="fas fa-expand-arrows-alt text-white"></span></li>
 </a>
 <form method="post" action="{{route('wishlist-store')}}">
